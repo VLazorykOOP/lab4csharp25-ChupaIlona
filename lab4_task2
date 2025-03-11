@@ -1,0 +1,632 @@
+internal class Program
+{
+ 
+
+    class VectorDecimal{
+        protected decimal[] ArrayDecimal; // масив
+        protected uint num; // розмір вектора
+        protected int codeError; // код помилки
+        protected static int num_vec=0; // кількість векторів
+       
+
+        public VectorDecimal()
+        {
+            this.ArrayDecimal = new decimal[1];
+            num = 1;
+            num_vec++;
+        }
+        public VectorDecimal(int size)
+        {
+            this.ArrayDecimal = new decimal[(int)size];
+            num = (uint)size;
+            num_vec++;
+        }
+        public VectorDecimal(int size, decimal value)
+        {
+            this.ArrayDecimal = new decimal[size];
+            num = (uint)size;
+            num_vec++;
+            for (int i = 0; i < ArrayDecimal.Length; i++)
+            {
+                ArrayDecimal[i] = value;
+            }
+        }
+         ~VectorDecimal()
+        {
+            Console.WriteLine("Запрацював Destructor");
+        }
+
+        public void inputElements()
+        {
+            Console.WriteLine("Заповнюємо масив ");
+            for (int i = 0; i < num; i++)
+            {
+                Console.Write("element [" + i + "] = ");
+                ArrayDecimal[i] = int.Parse(Console.ReadLine());
+            }
+            Console.WriteLine("Масив заповнено");
+        }
+        public void printElements()
+        {
+            for (int i = 0; i < num; i++)
+            {
+                Console.WriteLine("Element[" + i + "]= " + ArrayDecimal[i]);
+            }
+        }
+
+        public void inputElement(int index, decimal value)
+        {
+            if (index > num - 1)
+            {
+                Console.WriteLine("Wrong index");
+            }
+            else
+            {
+                ArrayDecimal[index] = value;
+            }
+        }
+
+        public static int numberOfVectors()
+        {
+            return num_vec;
+        }
+
+        //ВЛАСТИВОСТІ
+        public uint Num
+        {
+            get { return num; }
+            set
+            {
+                if (value > 0)
+                {
+                    num = value;
+                }
+                else Console.WriteLine("Wrong value");
+            }
+
+        }
+        public int CodeError
+        {
+            get { return codeError; }
+            set { codeError = value; }
+        }
+
+        public decimal this[int index]
+        {
+            get
+            {
+                if (index >= 0 && index < num)
+                {
+                    return ArrayDecimal[index];
+                }
+                else
+                {
+                    Console.WriteLine("Wrong index");
+                    return 0m; // Повертаємо 0m (decimal)
+                }
+            }
+
+            set
+            {
+                if (index >= 0 && index < num)
+                {
+                    ArrayDecimal[index] = value;
+                }
+                else
+                {
+                    codeError = 1;
+                    Console.WriteLine("Wrong index. codeError = 1");
+                }
+            }
+        }
+
+        public static VectorDecimal operator ++(VectorDecimal vector)
+        {
+            for (int i = 0; i < vector.num; i++)
+            {
+                vector.ArrayDecimal[i]++;
+            }
+            return vector;
+        }
+
+        public static VectorDecimal operator --(VectorDecimal vector)
+        {
+            for (int i = 0; i < vector.num; i++)
+            {
+                vector.ArrayDecimal[i]--;
+            }
+            return vector;
+        }
+
+        public static bool operator true(VectorDecimal vector)
+        {
+            for (int i = 0; i < vector.num; i++)
+            {
+                if (vector.ArrayDecimal[i] == 0)
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool operator false(VectorDecimal vector)
+        {
+            for (int i = 0; i < vector.num; i++)
+            {
+                if (vector.ArrayDecimal[i] == 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public static VectorDecimal operator ~(VectorDecimal vector)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+
+            for (int i = 0; i < vector.num; i++)
+            {
+                result.ArrayDecimal[i] = decimal.Floor(vector.ArrayDecimal[i]);
+            }
+
+            return result;
+        }
+
+        public static VectorDecimal operator +(VectorDecimal vector, decimal scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+            for (int i = 0; i < vector.num; i++)
+            {
+                result.ArrayDecimal[i] = vector.ArrayDecimal[i] + scalar;
+            }
+
+            return result;
+        }
+
+        public static VectorDecimal operator +(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors should be equal in size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num);
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                result.ArrayDecimal[i] = vector1.ArrayDecimal[i] + vector2.ArrayDecimal[i];
+            }
+
+            return result;
+        }
+
+        public static VectorDecimal operator -(VectorDecimal vector, decimal scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+            for (int i = 0; i < vector.num; i++)
+            {
+                result.ArrayDecimal[i] = vector.ArrayDecimal[i] - scalar;
+            }
+            return result;
+        }
+
+        public static VectorDecimal operator -(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors should be equal in size");
+            }
+            else
+            {
+                VectorDecimal result = new VectorDecimal((int)(vector1.num));
+                for (int i = 0; i < vector1.num; i++)
+                {
+                    result.ArrayDecimal[i] = vector1.ArrayDecimal[i] - vector2.ArrayDecimal[i];
+                }
+
+                return result;
+            }
+        }
+
+        public static VectorDecimal operator *(VectorDecimal vector, decimal scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+            for (int i = 0; i < result.num; i++)
+            {
+                result.ArrayDecimal[i] = vector.ArrayDecimal[i] * scalar;
+            }
+
+            return result;
+        }
+
+        public static VectorDecimal operator *(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != 3 || vector2.num != 3)
+            {
+                throw new ArgumentException("Vectors size should be 3");
+            }
+            else {
+
+                VectorDecimal result = new VectorDecimal(3);
+                result.ArrayDecimal[0] = vector1.ArrayDecimal[1] * vector2.ArrayDecimal[2] - vector1.ArrayDecimal[2] * vector2.ArrayDecimal[1];// x = a2*b3 - a3*b2
+                result.ArrayDecimal[1] = vector1.ArrayDecimal[2] * vector2.ArrayDecimal[0] - vector1.ArrayDecimal[0] * vector2.ArrayDecimal[2]; // y = a3*b1 - a1*b3
+                result.ArrayDecimal[2] = vector1.ArrayDecimal[0] * vector2.ArrayDecimal[1] - vector1.ArrayDecimal[1] * vector2.ArrayDecimal[0];   // z = a1*b2 - a2*b1
+
+               return result;} 
+                      
+
+        }
+
+        public static VectorDecimal operator /(VectorDecimal vector, decimal scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+            for (int i = 0; i < result.num; i++)
+            {
+                result.ArrayDecimal[i] = vector.ArrayDecimal[i] / scalar;
+            }
+
+            return result;
+        }
+
+        public static VectorDecimal operator %(VectorDecimal vector, decimal scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+            for (int i = 0; i < result.num; i++)
+            {
+                result.ArrayDecimal[i] = vector.ArrayDecimal[i] % scalar;
+            }
+
+            return result;
+        }
+
+        //Побітове додавання
+        public static VectorDecimal operator |(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors must have the same size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num); // Створюємо новий вектор
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                int a = (int)vector1.ArrayDecimal[i]; // Конвертуємо decimal → int
+                int b = (int)vector2.ArrayDecimal[i]; // Конвертуємо decimal → int
+                result.ArrayDecimal[i] = a | b;  // Виконуємо побітове OR
+            }
+
+            return result;
+        }
+
+        // Побітове додавання (OR) вектора і скаляра
+        public static VectorDecimal operator |(VectorDecimal v, byte scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)v.num);
+
+            for (int i = 0; i < v.num; i++)
+            {
+                int element = (int)v.ArrayDecimal[i]; // Конвертуємо decimal → int
+                result.ArrayDecimal[i] = element | scalar;
+            }
+
+            return result;
+        }
+
+        // Побітове додавання за модулем 2 (XOR) двох векторів
+        public static VectorDecimal operator ^(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors must have the same size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num);
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                int a = (int)vector1.ArrayDecimal[i]; // Конвертуємо decimal → int
+                int b = (int)vector2.ArrayDecimal[i]; 
+                result.ArrayDecimal[i] = a ^ b;  
+            }
+
+            return result;
+        }
+
+        // Побітове додавання за модулем 2 (XOR) вектора і скаляра
+        public static VectorDecimal operator ^(VectorDecimal vector, byte scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+
+            for (int i = 0; i < vector.num; i++)
+            {
+                int element = (int)vector.ArrayDecimal[i]; // Конвертуємо decimal → int
+                result.ArrayDecimal[i] = element ^ scalar;
+            }
+
+            return result;
+
+        }
+
+        // Побітове множення (AND) двох векторів
+        public static VectorDecimal operator &(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors must have the same size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num);
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                int a = (int)vector1.ArrayDecimal[i]; // Конвертуємо decimal → int
+                int b = (int)vector2.ArrayDecimal[i];
+                result.ArrayDecimal[i] = a & b;
+            }
+
+            return result;
+        }
+
+        // Побітове множення (AND) вектора і скаляра
+        public static VectorDecimal operator &(VectorDecimal vector, byte scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+
+            for (int i = 0; i < vector.num; i++)
+            {
+                int element = (int)vector.ArrayDecimal[i]; // Конвертуємо decimal → int
+                result.ArrayDecimal[i] = element & scalar;
+            }
+
+            return result;
+        }
+
+        // Побітовий зсув вправо для двох векторів
+        public static VectorDecimal operator >>(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors must have the same size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num);
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                int a = (int)vector1.ArrayDecimal[i];  // Приведення decimal → int
+                int b = (int)vector2.ArrayDecimal[i];  // Приведення decimal → int
+
+                if (b < 0) b = 0; // Уникнення від’ємного зсуву
+                result.ArrayDecimal[i] = a >> b; // Зсув вправо
+            }
+
+            return result;
+        }
+
+        // Побітовий зсув вправо для вектора і скаляра
+        public static VectorDecimal operator >>(VectorDecimal vector, uint scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+
+            for (int i = 0; i < vector.num; i++)
+            {
+                int a = (int)vector.ArrayDecimal[i]; // Приведення decimal → int
+                result.ArrayDecimal[i] = a >> (int)scalar; // Зсув вправо
+            }
+
+            return result;
+        }
+
+        // Побітовий зсув вліво для двох векторів
+        public static VectorDecimal operator <<(VectorDecimal vector1, VectorDecimal vector2)
+        {
+            if (vector1.num != vector2.num)
+            {
+                throw new ArgumentException("Vectors must have the same size");
+            }
+
+            VectorDecimal result = new VectorDecimal((int)vector1.num);
+
+            for (int i = 0; i < vector1.num; i++)
+            {
+                int a = (int)vector1.ArrayDecimal[i]; // Приведення decimal → int
+                int b = (int)vector2.ArrayDecimal[i]; // Приведення decimal → int
+
+                if (b < 0) b = 0; // Уникнення від’ємного зсуву
+                result.ArrayDecimal[i] = a << b; // Зсув вліво
+            }
+
+            return result;
+        }
+
+        // Побітовий зсув вліво для вектора і скаляра
+        public static VectorDecimal operator <<(VectorDecimal vector, uint scalar)
+        {
+            VectorDecimal result = new VectorDecimal((int)vector.num);
+
+            for (int i = 0; i < vector.num; i++)
+            {
+                int a = (int)vector.ArrayDecimal[i]; // Приведення decimal → int
+                result.ArrayDecimal[i] = a << (int)scalar; // Зсув вправо
+            }
+
+            return result;
+
+        }
+
+        // Оператор рівності ==
+        public static bool operator ==(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return false; // Перевірка на рівність розмірів векторів
+
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] != v2.ArrayDecimal[i]) // Порівняння елементів масивів
+                {
+                    return false; // Якщо хоча б один елемент не рівний, повертаємо false
+                }
+            }
+
+            return true; // Якщо всі елементи рівні, повертаємо true
+        }
+
+        // Оператор нерівності !=
+        public static bool operator !=(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return true; // Якщо розміри векторів різні, вони не рівні
+
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] != v2.ArrayDecimal[i]) // Порівняння елементів масивів
+                {
+                    return true; // Якщо хоча б один елемент різний, повертаємо true
+                }
+            }
+
+            return false; // Якщо всі елементи рівні, повертаємо false
+        }
+
+        // Оператор більше >
+        public static bool operator >(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return false; // Якщо розміри векторів різні, повертаємо false
+
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] <= v2.ArrayDecimal[i]) // Якщо хоча б один елемент менший або рівний, повертаємо false
+                {
+                    return false;
+                }
+            }
+
+            return true; // Якщо всі елементи більші, повертаємо true
+        }
+
+        // Оператор більше рівне >=
+        public static bool operator >=(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return false; // Якщо розміри векторів різні, повертаємо false
+
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] < v2.ArrayDecimal[i]) // Якщо хоча б один елемент менший, повертаємо false
+                {
+                    return false;
+                }
+            }
+
+            return true; // Якщо всі елементи більші або рівні, повертаємо true
+        }
+
+        // Оператор менше <
+        public static bool operator <(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return false; // Якщо розміри векторів різні, повертаємо false
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] >= v2.ArrayDecimal[i]) // Якщо хоча б один елемент більший або рівний, повертаємо false
+                {
+                    return false;
+                }
+            }
+            return true; // Якщо всі елементи менші, повертаємо true
+        }
+
+        // Оператор менше рівне <=
+        public static bool operator <=(VectorDecimal v1, VectorDecimal v2)
+        {
+            if (v1.num != v2.num) return false; // Якщо розміри векторів різні, повертаємо false
+            for (int i = 0; i < v1.num; i++)
+            {
+                if (v1.ArrayDecimal[i] > v2.ArrayDecimal[i]) // Якщо хоча б один елемент більший, повертаємо false
+                {
+                    return false;
+                }
+            }
+            return true; // Якщо всі елементи менші або рівні, повертаємо true
+        }
+
+        public override string ToString()
+        {
+            return $"VectorDecimal: array={ArrayDecimal}, size={num}, there are {num_vec} vectors";
+        }
+
+
+    
+
+
+    public static void Main(string[] args)
+    {
+       Console.WriteLine("Створюємо vector1");
+        VectorDecimal vector1 = new VectorDecimal(3, 45);
+        Console.WriteLine(vector1);
+        vector1.printElements();
+        Console.WriteLine("Змінимо один елемент");
+        vector1.inputElement(1, 22);
+        vector1.printElements();
+
+
+        Console.WriteLine();
+        Console.WriteLine("Створюємо vector2, не вказуєчи елементи у конструкторі");
+        VectorDecimal vector2 = new VectorDecimal(3);
+        Console.WriteLine(vector2);
+        vector2.printElements();
+
+
+        Console.WriteLine();
+        Console.WriteLine("Заповнюємо vector2 новими значеннями");
+        vector2.inputElements();
+        vector2.printElements();
+
+
+        Console.WriteLine("Створюємо масив vector3 = vector1 + vector2");
+        VectorDecimal vector3 = new VectorDecimal(3);
+        vector3 = vector1 + vector2;
+        vector3.printElements();
+
+        Console.WriteLine();
+        Console.WriteLine("Використаємо декремент для vector3");
+        vector3--;
+        vector3.printElements();
+
+
+        Console.WriteLine();
+        Console.WriteLine("Створюємо vector4 -> vector3*скаляр s ");
+        Console.Write("Введіть скаляр s =");
+        int s = int.Parse(Console.ReadLine());
+        VectorDecimal vector4 = new VectorDecimal(3);
+        vector4 = vector3 * s;
+        vector4.printElements();
+
+        Console.WriteLine();
+        Console.WriteLine("Якщо vector2 немає всі нульові елементи то vector4 + vector1");
+        if (vector2)
+        {
+            vector1=vector1 + vector4;
+            vector1.printElements();
+        }
+        else
+        {
+            Console.WriteLine("Елементи не є нульовими");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Побітове множення двох векторів");
+        VectorDecimal v1 = new VectorDecimal(3); 
+        Console.WriteLine();
+        Console.WriteLine("Перший вектор");
+        v1.inputElements();
+        VectorDecimal v2 = new VectorDecimal(3);
+        Console.WriteLine();
+        Console.WriteLine("Другий вектор");
+        v2.inputElements();
+
+        Console.WriteLine();
+        VectorDecimal result = vector1 & vector2;
+        Console.WriteLine("Результат побітового множення (AND):");
+        for (int i = 0; i < result.Num; i++)
+        {
+            Console.WriteLine($"Element {i}: {result[i]}");
+        }
+    } 
+}
+
