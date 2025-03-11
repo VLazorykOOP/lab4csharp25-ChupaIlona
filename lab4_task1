@@ -1,0 +1,176 @@
+namespace lab4second_try
+{
+    internal class Program
+    {
+        class IsoTriangle
+        {
+            protected int a; // основа
+            protected int b; // бічна сторона
+            protected string color;
+
+            // Властивості
+            public int A
+            {
+                get { return a; }
+                set { a = value; }
+            }
+
+            public int B
+            {
+                get { return b; }
+                set { b = value; }
+            }
+
+            public string Color
+            {
+                get { return color; }
+                set { color = value; }
+            }
+
+            // Індексатор для числових значень (a і b)
+            public int this[int index]
+            {
+                get
+                {
+                    switch (index)
+                    {
+                        case 0: return a;
+                        case 1: return b;
+                        default: throw new IndexOutOfRangeException("Неправильний індекс!");
+                    }
+                }
+                set
+                {
+                    switch (index)
+                    {
+                        case 0: a = value; break;
+                        case 1: b = value; break;
+                        default: throw new IndexOutOfRangeException("Неправильний індекс!");
+                    }
+                }
+            }
+
+            // Індексатор для кольору (string)
+            public string this[string key]
+            {
+                get
+                {
+                    if (key == "color")
+                        return color;
+                    throw new ArgumentException("Неправильний ключ! Використовуйте 'color'.");
+                }
+                set
+                {
+                    if (key == "color")
+                        color = value;
+                    else
+                        throw new ArgumentException("Неправильний ключ! Використовуйте 'color'.");
+                }
+            }
+
+            // Конструктор
+            public IsoTriangle(int a, int b, string color)
+            {
+                this.a = a;
+                this.b = b;
+                this.color = color;
+            }
+
+            public int Perimeter()
+            {
+                return a + 2 * b;
+            }
+
+            public bool IsRight()
+            {
+                return (b * b) * 2 == (a * a);
+            }
+
+            public double Square()
+            {
+                double h = Math.Sqrt(b * b - (a * a) / 4.0);
+                return (a * h) / 2;
+            }
+
+            public void PrintColor()
+            {
+                Console.WriteLine(color);
+            }
+
+            public override string ToString()
+            {
+                return $"IsoTriangle: base={a}, side={b}, color={color}";
+            }
+
+            public static IsoTriangle operator ++(IsoTriangle isoTriangle)
+            {
+                return new IsoTriangle(isoTriangle.a + 1, isoTriangle.b + 1, isoTriangle.color);
+            }
+
+
+            public static IsoTriangle operator --(IsoTriangle isoTriangle)
+            {
+                return new IsoTriangle(isoTriangle.a - 1, isoTriangle.b - 1, isoTriangle.color);
+            }
+
+            public static IsoTriangle operator *(IsoTriangle isoTriangle, int k)
+            {
+                return new IsoTriangle(isoTriangle.a * k, isoTriangle.b * k, isoTriangle.color);
+            }
+
+            public static bool operator true(IsoTriangle isoTriangle)
+            {
+                return isoTriangle.b * 2 > isoTriangle.a;
+            }
+
+            public static bool operator false(IsoTriangle isoTriangle)
+            {
+                return !(isoTriangle.b * 2 > isoTriangle.A);
+            }
+            public static implicit operator string(IsoTriangle isoTriangle)
+            {
+                return $"IsoTriangle: {isoTriangle.a},{isoTriangle.b}, {isoTriangle.color}";
+            }
+
+
+            public static implicit operator IsoTriangle(string str)
+            {
+                string[] data = str.Split(',');
+                if (data.Length == 3)
+                {
+                    int a = int.Parse(data[0].Trim());
+                    int b = int.Parse(data[1].Trim());
+                    string color = data[2].Trim();
+                    return new IsoTriangle(a, b, color);
+                }
+                else
+                {
+                    throw new FormatException("Невірний формат рядка для створення IsoTriangle");
+                }
+            }
+        }
+
+public static void Main(string[] args)
+{
+    IsoTriangle triangle = new IsoTriangle(5, 7, "Yellow");
+triangle[0] = 10;
+triangle[1] = 8;
+triangle["color"] = "Blue";
+Console.WriteLine(triangle);
+
+if (triangle)
+{
+    Console.WriteLine("It is a triangle");
+}
+else{Console.WriteLine("It can not be triangle");}
+string input = "5, 7, Green";
+IsoTriangle triangle2 = input; // Автоматичне перетворення рядка на об'єкт IsoTriangle
+Console.WriteLine(triangle2); // Виведення результату
+
+Console.WriteLine("Множимо перший трикутник на скаляр 10");
+triangle = triangle * 10;
+Console.WriteLine(triangle);
+  
+}
+}
+}
