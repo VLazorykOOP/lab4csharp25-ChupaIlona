@@ -1,0 +1,631 @@
+internal class Program
+{ 
+  class DecimalMatrix
+{
+    protected decimal[,] DCArray; //масив
+    protected uint n, m;     //розміри масиву
+    protected int codeError;
+    protected static int num_mf; //кількість матриць
+
+    public DecimalMatrix()
+    {
+        this.n = 1;
+        this.m = 0;
+        this.DCArray = new decimal[n, m];
+        num_mf++;
+    }
+
+    public DecimalMatrix(uint n, uint m)
+    {
+        this.n = n;
+        this.m = m;
+        this.DCArray = new decimal[n, m];
+        num_mf++;
+    }
+
+    public DecimalMatrix(uint n, uint m, decimal value)
+    {
+        this.n = n;
+        this.m = m;
+        this.DCArray = new decimal[n, m];
+        num_mf++;
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                DCArray[i, j] = value;
+            }
+        }
+    }
+
+    ~DecimalMatrix()
+    {
+        Console.WriteLine("Запрацював деструктор");
+    }
+
+    public void inputElements()
+    {
+        Console.WriteLine("Заповнюємо матрицю елементами");
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                Console.Write("Елемент [" + i + "," + j + "] = ");
+
+                DCArray[i, j] = int.Parse(Console.ReadLine());
+            }
+        }
+        Console.WriteLine("Матрицю заповнено");
+        Console.WriteLine();
+    }
+
+    public void printElements()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                Console.WriteLine("Елемент [" + i + "," + j + "] = " + DCArray[i, j]);
+            }
+        }
+    }
+
+    public void setElement(int i, int j, int value)
+    {
+        DCArray[i, j] = value;
+    }
+
+    public void setElements(int value)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                DCArray[i, j] = value;
+            }
+        }
+    }
+
+    public static int getNum_mf()
+    {
+        return num_mf;
+    }
+
+
+    //Властивості
+    public uint N
+    {
+        get { return n; }
+    }
+
+    public uint M
+    {
+        get { return m; }
+    }
+
+    public int CodeError
+    {
+        get { return codeError; }
+        set { codeError = value; }
+    }
+
+
+    //Індексактор 1
+    public decimal this[int i, int j]
+    {
+        get
+        {
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                return DCArray[i, j];
+            }
+            else
+            {
+                codeError = -1;
+                return 0;
+            }
+        }
+        set
+        {
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                DCArray[i, j] = value;
+            }
+            else
+            {
+                codeError = -1;
+            }
+        }
+    }
+
+
+    //Індексактор 2
+    public decimal this[int k]
+    {
+        get
+        {
+            int i = k / (int)m;
+            int j = k % (int)m;
+
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                return DCArray[i, j];
+            }
+            else
+            {
+                codeError = -1;
+                return 0;
+            }
+        }
+        set
+        {
+            int i = k / (int)m;
+            int j = k % (int)m;
+
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                DCArray[i, j] = value;
+            }
+            else
+            {
+                codeError = -1;
+            }
+        }
+    }
+
+
+    public static DecimalMatrix operator ++(DecimalMatrix matrix)
+    {
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                matrix.DCArray[i, j]++;
+            }
+        }
+        return matrix;
+    }
+
+    public static DecimalMatrix operator --(DecimalMatrix matrix)
+    {
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                matrix.DCArray[i, j]--;
+            }
+        }
+        return matrix;
+    }
+
+    public static bool operator true(DecimalMatrix decimalMatrix)
+    {
+        if(decimalMatrix.n==0 && decimalMatrix.m == 0)
+        {
+            return false;
+        }
+        for(int i=0;i< decimalMatrix.n; i++)
+        {
+            for(int j=0;j< decimalMatrix.m; j++)
+            {
+                if (decimalMatrix.DCArray[i, j] == 0)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static bool operator false(DecimalMatrix decimalMatrix)
+    {
+        if (decimalMatrix.n == 0 && decimalMatrix.m == 0)
+        {
+            return true;
+        }
+        for (int i = 0; i < decimalMatrix.n; i++)
+        {
+            for (int j = 0; j < decimalMatrix.m; j++)
+            {
+                if (decimalMatrix.DCArray[i, j] == 0)
+                {
+                    return true; 
+                }
+            }
+        }
+        return false;
+    }
+
+    public static bool operator !(DecimalMatrix decimalMatrix)
+    {
+        return !(decimalMatrix.n != 0 && decimalMatrix.m != 0);
+    }
+
+
+    public static DecimalMatrix operator ~(DecimalMatrix decimalMatrix)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+
+        for (int i = 0; i < decimalMatrix.n; i++)
+        {
+            for (int j = 0; j < decimalMatrix.m; j++)
+            {
+                result.DCArray[i, j] = ~(int)decimalMatrix.DCArray[i, j];
+            }
+        }
+
+        return result;
+    }
+
+    public static DecimalMatrix operator +(DecimalMatrix decimalMatrix, decimal scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+        for(int i = 0; i < result.n; i++)
+        {
+            for(int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = decimalMatrix.DCArray[i, j] + scalar;
+            }
+        }
+        return result;
+    }
+
+    public static DecimalMatrix operator +(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if((matrix1.n!=matrix2.n)|| (matrix1.m != matrix2.m))
+        {
+            Console.WriteLine("Матриці повинні бути однакові");
+        }
+        
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+         for (int i = 0; i < result.n; i++)
+            {
+             for (int j = 0; j < result.m; j++)
+              {
+               result.DCArray[i, j] = matrix1.DCArray[i, j] + matrix2.DCArray[i, j];
+               }
+            }
+              return result;
+    }
+
+
+    public static DecimalMatrix operator -(DecimalMatrix decimalMatrix, decimal scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = decimalMatrix.DCArray[i, j] - scalar;
+            }
+        }
+        return result;
+    }
+
+    public static DecimalMatrix operator -(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if ((matrix1.n != matrix2.n) || (matrix1.m != matrix2.m))
+        {
+            Console.WriteLine("Матриці повинні бути однакові");
+        }
+
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = matrix1.DCArray[i, j] - matrix2.DCArray[i, j];
+            }
+        }
+        return result;
+    }
+
+    public static DecimalMatrix operator *(DecimalMatrix decimalMatrix, decimal scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = decimalMatrix.DCArray[i, j] * scalar;
+            }
+        }
+        return result;
+    }
+
+    public static DecimalMatrix operator *(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.m)
+        {
+            Console.WriteLine("Для множення рядок матриці1 має бути рівним стовпчику матриці2");
+        }
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix2.m);
+        for(int i = 0; i < matrix1.n; i++)
+        {
+            for (int j = 0; j < matrix2.m; j++)
+            {
+                for (int k = 0; k < matrix1.m; k++)
+                {
+                    result.DCArray[i,j]= matrix1.DCArray[i, k] * matrix2.DCArray[k, j];
+                }
+
+            }
+        }
+        return result;
+    }
+
+    public static VectorDecimal operator *(DecimalMatrix matrix,VectorDecimal vector)  //спочатку матриця потім вектор  
+    {
+        if (matrix.m != vector.Num)
+        {
+            Console.WriteLine("Для множення рядок матриці має бути рівним вектору");
+        }
+        VectorDecimal result = new VectorDecimal((int)matrix.n);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            decimal value = 0;
+            for (int j = 0; j < matrix.m; j++)
+            {
+                value += matrix.DCArray[i, j] * vector[j];
+            }
+            result.inputElement(i, value); // Записуємо результат у вектор
+        }
+        return result;
+    }
+
+    public static DecimalMatrix operator /(DecimalMatrix decimalMatrix, float scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = decimalMatrix.DCArray[i, j] / (decimal)scalar;
+            }
+        }
+        return result;
+
+    }
+
+    public static DecimalMatrix operator /(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.m)
+        {
+            Console.WriteLine("Для множення рядок матриці1 має бути рівним стовпчику матриці2");
+        }
+
+        //Спочатку обертаємо матрицю2
+        DecimalMatrix transposed = new DecimalMatrix(matrix1.m, matrix1.n);
+        for (int i = 0; i < matrix2.n; i++)
+        {
+            for(int j = 0; j < matrix2.m; j++)
+            {
+                transposed.DCArray[i, j] = matrix2.DCArray[j, i];
+
+            }
+        }
+
+        return matrix1 * transposed;
+    }
+
+    public static DecimalMatrix operator %(DecimalMatrix decimalMatrix, float scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(decimalMatrix.n, decimalMatrix.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = decimalMatrix.DCArray[i, j] % (decimal)scalar;
+            }
+        }
+        return result;
+
+    }
+
+    // Побітове OR (|)
+    public static DecimalMatrix operator |(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+            throw new ArgumentException("Матриці повинні мати однаковий розмір");
+
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix1.DCArray[i, j] | (int)matrix2.DCArray[i, j]);
+            }
+        }
+        return result;
+    }
+
+    
+    public static DecimalMatrix operator |(DecimalMatrix matrix, decimal scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(matrix.n, matrix.m);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix.DCArray[i, j] | (int)scalar);
+            }
+        }
+        return result;
+    }
+
+    // Побітове XOR (^)
+    public static DecimalMatrix operator ^(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+            throw new ArgumentException("Матриці повинні мати однаковий розмір");
+
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix1.DCArray[i, j] ^ (int)matrix2.DCArray[i, j]);
+            }
+        }
+        return result;
+    }
+
+    
+    public static DecimalMatrix operator ^(DecimalMatrix matrix, decimal scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(matrix.n, matrix.m);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix.DCArray[i, j] ^ (int)scalar);
+            }
+        }
+        return result;
+    }
+
+    // Побітовий зсув вправо
+    public static DecimalMatrix operator >>(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+            throw new ArgumentException("Матриці повинні мати однаковий розмір");
+
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix1.DCArray[i, j] >> (int)matrix2.DCArray[i, j]);
+            }
+        }
+        return result;
+    }
+
+    
+    public static DecimalMatrix operator >>(DecimalMatrix matrix, ushort scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(matrix.n, matrix.m);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix.DCArray[i, j] >> scalar);
+            }
+        }
+        return result;
+    }
+
+    // Побітовий зсув вліво (<<)
+    public static DecimalMatrix operator <<(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+            throw new ArgumentException("Матриці повинні мати однаковий розмір");
+
+        DecimalMatrix result = new DecimalMatrix(matrix1.n, matrix1.m);
+        for (int i = 0; i < result.n; i++)
+        {
+            for (int j = 0; j < result.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix1.DCArray[i, j] << (int)matrix2.DCArray[i, j]);
+            }
+        }
+        return result;
+    }
+
+    
+    public static DecimalMatrix operator <<(DecimalMatrix matrix, ushort scalar)
+    {
+        DecimalMatrix result = new DecimalMatrix(matrix.n, matrix.m);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                result.DCArray[i, j] = (decimal)((int)matrix.DCArray[i, j] << scalar);
+            }
+        }
+        return result;
+    }
+
+   
+    public static bool operator ==(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+            return false;
+
+        for (int i = 0; i < matrix1.n; i++)
+        {
+            for (int j = 0; j < matrix1.m; j++)
+            {
+                if (matrix1.DCArray[i, j] != matrix2.DCArray[i, j])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    
+    public static bool operator !=(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        return !(matrix1 == matrix2);
+    }
+
+    // Оператори порівняння (> >= < <=)
+    public static bool operator >(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        return SumElements(matrix1) > SumElements(matrix2);
+    }
+
+    public static bool operator >=(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        return SumElements(matrix1) >= SumElements(matrix2);
+    }
+
+    public static bool operator <(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        return SumElements(matrix1) < SumElements(matrix2);
+    }
+
+    public static bool operator <=(DecimalMatrix matrix1, DecimalMatrix matrix2)
+    {
+        return SumElements(matrix1) <= SumElements(matrix2);
+    }
+
+    
+}
+
+public static void Main(string[] args)
+{
+    Console.WriteLine("Створюємо матрицю 1");
+DecimalMatrix matrix1 = new DecimalMatrix(3, 3, 5);
+matrix1.printElements();
+Console.WriteLine();
+Console.WriteLine("Змінимо один елемент");
+matrix1.setElement(2, 0, 100);
+matrix1.printElements();
+
+Console.WriteLine();
+Console.WriteLine("Створюємо матрицю 2");
+DecimalMatrix matrix2 = new DecimalMatrix(3, 3);
+matrix2.printElements();
+Console.WriteLine();
+
+Console.WriteLine("Якщо введена матриця ненульова, то множимо матрицю 1 на скаляр = 5, інакше заповнюємо матрицю2 та виконуємо побітовий зсув вправо на 1");
+if (matrix2)
+{
+    matrix1 = matrix1 * 5;
+    matrix1.printElements();
+}
+else
+{
+    matrix2.inputElements();
+    matrix2 = matrix2 >> 1;
+    matrix2.printElements();
+}
+
+
+    
+}
+
+}
